@@ -98,7 +98,7 @@ def Diag_Grad(C1, C2, step, thresh):
     
     iters = 0
     while SPD_Norm(D_opt, tan) > thresh:
-        print(str(SPD_Norm(D_opt, tan)))
+        #print(str(SPD_Norm(D_opt, tan)))
         D_opt = Diag_Geo(D_opt, -step*tan)
         tan   = Diag_Tan(C1, C2, D_opt)
         iters += 1
@@ -116,27 +116,17 @@ def Diag_Newton(C1, C2, thresh):
     
     iters = 0
     while SPD_Norm(D_opt, tan) > thresh:
-        print(str(SPD_Norm(D_opt, tan)))
+        #print(str(SPD_Norm(D_opt, tan)))
         D_opt = Diag_Geo(D_opt, -tan)
         grad   = Diag_Tan(C1, C2, D_opt)
         Hess   = Diag_Hess(C1, C2, D_opt)
         
-        tan = np.reshape(  LA.solve(Hess, np.reshape(grad, [n**2, 1]) )   , [n,n])
+        tan = np.multiply( np.identity(n), np.reshape(  LA.solve(Hess, np.reshape(grad, [n**2, 1]) )   , [n,n]) )
         
         iters += 1
     
     P_opt = np.matmul(D_opt, np.matmul(C2, D_opt))    
     return D_opt, P_opt, iters, SPD_Norm(D_opt, tan)
-
-    
-       
-       
-        
-    
-       
-       
-       
-       
        
        
 # Simulation and Verification
@@ -158,13 +148,13 @@ def Corr_Simulation(n, thresh):
     C2 = Corr_Proj( LA.expm((B + np.transpose(B))/2 )  )
     
     #_, P_opt, _, _ = Diag_Grad(C1, C2, step, thresh)
-    _, P_opt, _, _ = Diag_Newton(C1, C2, thresh)
+    D_opt, P_opt, _, _ = Diag_Newton(C1, C2, thresh)
     
     P_sqrt = LA.sqrtm(P_opt)
     tan = np.matmul(P_sqrt,  np.matmul(  LA.logm( LA.solve(P_sqrt,  np.transpose(LA.solve(P_sqrt, C1  )) ) )  , P_sqrt  ))
     P_fin = SPD_Geo(P_opt, tan)
     
-    return C1, C2, P_opt, P_fin, Corr_Proj(P_fin)
+    return C1, C2, D_opt, P_opt, P_fin, Corr_Proj(P_fin)
     
        
        
