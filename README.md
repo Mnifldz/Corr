@@ -1,0 +1,3 @@
+This project focuses on how to perform metastatistics of scalar correlation values via Lie groups as described in the attached paper (also found here: https://onlinelibrary.wiley.com/doi/full/10.1002/sta4.494).  
+Corr.py holds the class definitions that automate the process of computing average and standard deviation of correlation values as well as finding anomalies and standard deviation windows.  Please see the documentation therein for descriptions on the class definitions.
+StockCorrelationAnalysis.py gives a working example of how to visualize anomalies in correlation time series over recurring intervals.  The example given is with stock closing prices but any pair of numeric time-series data will work.
